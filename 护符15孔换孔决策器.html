@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="离线护符10至15孔版图比较、组件匹配与可调权重概率模拟工具">
+  <title>护符 10–15 孔打孔决策器</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%231e293b' d='M32 3 57 17v30L32 61 7 47V17z'/%3E%3Cpath fill='%2338bdf8' d='m32 14 15 9v18l-15 9-15-9V23z'/%3E%3Ccircle cx='32' cy='32' r='7' fill='%23f8fafc'/%3E%3C/svg%3E">
+  <style>
+    :root{--ink:#172033;--muted:#687386;--paper:#f4f7fb;--card:#fff;--line:#dbe3ee;--accent:#0f78a7;--accent2:#34b6b2;--lit:#35b7c8;--lit2:#0f7694;--dark:#d8e1ec;--warn:#b95e20;--good:#147d64;--bad:#bd3d4f;--shadow:0 18px 50px rgba(31,47,71,.10);font-family:Inter,"Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+    *{box-sizing:border-box} body{margin:0;min-width:320px;background:radial-gradient(circle at 8% 2%,#dff5f6 0,transparent 28rem),linear-gradient(180deg,#f8fafc,#eef3f8);min-height:100vh}
+    button,input,select{font:inherit} button{cursor:pointer} button:focus-visible,input:focus-visible,select:focus-visible,[role=button]:focus-visible{outline:3px solid rgba(15,120,167,.28);outline-offset:2px}
+    .shell{max-width:1500px;margin:auto;padding:22px}.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}.brand{display:flex;gap:13px;align-items:center}.brand-mark{width:44px;height:44px;display:grid;place-items:center;background:#172033;color:white;clip-path:polygon(25% 7%,75% 7%,100% 50%,75% 93%,25% 93%,0 50%);font-weight:800}.brand h1{font-size:1.35rem;margin:0 0 3px;letter-spacing:.01em}.brand p{margin:0;color:var(--muted);font-size:.9rem}.status-pill{border:1px solid #bfe1de;background:#edfafa;color:#19695f;padding:7px 10px;border-radius:999px;font-size:.8rem;white-space:nowrap}
+    .workspace{display:grid;grid-template-columns:minmax(370px,1.05fr) minmax(430px,1.45fr);gap:18px}.panel{background:rgba(255,255,255,.94);border:1px solid rgba(213,223,236,.9);border-radius:18px;box-shadow:var(--shadow)}.board-panel{padding:17px;position:sticky;top:14px;align-self:start}.side{display:grid;gap:18px}.side .panel{padding:18px}
+    .mode-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:5px;background:#edf2f7;border-radius:12px}.mode-tabs button{border:0;background:transparent;color:#526073;border-radius:9px;padding:10px 8px;font-weight:650}.mode-tabs button.active{background:white;color:#0c678d;box-shadow:0 3px 12px rgba(30,50,80,.10)}
+    .board-head{display:flex;justify-content:space-between;align-items:center;margin:15px 2px 4px}.board-head strong{font-size:1.05rem}.count{font-variant-numeric:tabular-nums;color:var(--muted)}.count b{color:var(--accent);font-size:1.05rem}.board-wrap{max-width:570px;margin:0 auto;padding:8px 2px 2px}.hex-board{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none}.hex-cell{cursor:pointer;transition:filter .12s,transform .12s}.hex-cell polygon{fill:var(--dark);stroke:#fff;stroke-width:2.2}.hex-cell:hover{filter:brightness(.96)}.hex-cell:focus{outline:none}.hex-cell:focus polygon{stroke:#17324d;stroke-width:3.2}.hex-cell.on polygon{fill:url(#cellGradient);stroke:#eaffff}.hex-cell.center polygon{stroke:#f4aa4b;stroke-width:3}.hex-cell text{pointer-events:none;font-size:8px;fill:#577083;text-anchor:middle;dominant-baseline:middle}.hex-cell.on text{fill:white}.board-note{min-height:22px;text-align:center;color:var(--muted);font-size:.86rem;margin:6px 0 8px}.toolbar{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.btn{border:1px solid #ced9e5;background:white;color:#24354b;border-radius:10px;padding:9px 12px;font-weight:620}.btn:hover{border-color:#9db2c8;background:#f8fbfd}.btn.primary{border-color:var(--accent);background:var(--accent);color:white}.btn.primary:hover{background:#0b678f}.btn.soft{border-color:#b7e2e0;background:#effafa;color:#146f69}.btn.danger{color:#a33849}.btn:disabled{cursor:not-allowed;opacity:.48}
+    h2{font-size:1.02rem;margin:0}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.section-head p{margin:4px 0 0;font-size:.84rem;color:var(--muted)}.form-row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:5px;flex:1;min-width:130px}.field label{font-size:.8rem;color:#5d697a}.field input,.field select{width:100%;border:1px solid #ccd8e5;background:#fbfdff;border-radius:9px;padding:9px 10px;color:var(--ink)}.target-set-bar{display:flex;gap:7px;align-items:center;margin:0 0 12px}.target-pages{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;flex:1;padding:2px}.target-tab{white-space:nowrap;border:1px solid #d3deea;background:#f5f8fb;color:#526073;border-radius:9px;padding:8px 11px;font-weight:650}.target-tab.active{border-color:#45aeb4;background:#eafafa;color:#126c72;box-shadow:0 2px 8px rgba(30,120,130,.12)}.set-actions{display:flex;gap:5px;flex:none}.set-actions .icon-btn{width:32px;height:32px}.component-actions{display:grid;grid-template-columns:1fr 90px auto;gap:8px;margin-top:13px}.components{display:grid;gap:9px;margin-top:13px}.component-empty{border:1px dashed #cbd7e4;border-radius:12px;padding:20px;color:var(--muted);text-align:center;font-size:.9rem}.component-card{display:grid;grid-template-columns:62px 1fr auto;gap:11px;align-items:center;border:1px solid #dce5ee;border-radius:12px;padding:9px;background:#fbfdff}.component-card.selected{border-color:#54b9c2;background:#effbfb}.mini{width:62px;height:50px}.comp-name{font-weight:700;font-size:.92rem}.comp-meta{font-size:.78rem;color:var(--muted);margin-top:3px}.qty{display:flex;align-items:center;gap:5px}.qty input{width:52px;padding:7px;border:1px solid #ccd8e5;border-radius:8px}.icon-btn{width:34px;height:34px;border-radius:9px;border:1px solid #d5dee8;background:white;color:#59677a;display:grid;place-items:center}.icon-btn:hover{color:var(--bad);border-color:#e3acb5}
+    .switches{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px}.check{display:flex;gap:7px;align-items:center;font-size:.85rem;color:#4c5b6d}.check input{width:17px;height:17px;accent-color:var(--accent)}
+    details{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}summary{cursor:pointer;font-weight:700;color:#26384e}.weight-intro{font-size:.83rem;line-height:1.55;color:var(--muted);margin:9px 0 13px}.weight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.weight-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.formula{margin-top:11px;padding:10px;border-radius:10px;background:#f1f6fa;color:#47566a;font-size:.79rem;line-height:1.5}.active-model{color:var(--good);font-weight:650}
+    .eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.eval-card{border:1px solid #dce5ee;border-radius:14px;padding:13px;background:#fbfdff;position:relative;overflow:hidden}.eval-card.recommended{border-color:#48aca9;box-shadow:inset 0 3px #48aca9}.eval-label{font-size:.78rem;color:var(--muted)}.eval-big{font-size:1.45rem;font-weight:800;margin:4px 0}.eval-note{font-size:.8rem;color:#5b6878;line-height:1.45}.badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:.72rem;font-weight:700;background:#e9eef4;color:#536176}.badge.good{background:#e6f7f2;color:#147d64}.badge.warn{background:#fff1e6;color:#9d551f}.sim-controls{display:grid;grid-template-columns:1fr 1fr auto;gap:9px;align-items:end;margin-top:13px}.progress{height:7px;background:#e6edf4;border-radius:20px;overflow:hidden;margin-top:11px;display:none}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .15s}.result-note{margin-top:10px;font-size:.78rem;color:var(--muted);line-height:1.5}.combo-comparison{margin-top:15px;border-top:1px solid var(--line);padding-top:14px}.combo-comparison h3{font-size:.95rem;margin:0 0 4px}.combo-comparison>p{font-size:.78rem;color:var(--muted);margin:0 0 10px}.combo-results{display:grid;gap:8px}.combo-row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(100px,1.4fr) auto;gap:10px;align-items:center;padding:10px;border:1px solid #dde6ef;border-radius:11px;background:#fbfdff}.combo-row.best{border-color:#56b4b2;background:#effafa}.combo-name{font-weight:700;font-size:.86rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.combo-bar{height:8px;background:#e4ebf2;border-radius:10px;overflow:hidden}.combo-bar span{display:block;height:100%;background:linear-gradient(90deg,#0f78a7,#34b6b2);border-radius:10px}.combo-value{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}.combo-ci{display:block;font-size:.68rem;font-weight:500;color:var(--muted);margin-top:2px}.best-board{margin-top:13px;border-top:1px solid var(--line);padding-top:13px;display:none}.best-board-grid{display:grid;grid-template-columns:165px 1fr;align-items:center;gap:13px}.best-board svg{width:165px}.best-board h3{margin:0 0 5px;font-size:.95rem}.best-board p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.5}
+    .notice{border-left:4px solid #e7a04d;background:#fff8ed;border-radius:10px;padding:10px 12px;color:#6f512e;font-size:.8rem;line-height:1.5;margin-top:12px}.toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);background:#172033;color:white;padding:10px 15px;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:.2s;z-index:10;font-size:.88rem}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:900px){.shell{padding:13px}.topbar{align-items:center}.brand p{display:none}.workspace{grid-template-columns:1fr}.board-panel{position:static}.weight-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:560px){.status-pill{display:none}.panel,.side .panel{border-radius:14px}.board-panel,.side .panel{padding:13px}.component-actions{grid-template-columns:1fr 76px}.component-actions button{grid-column:1/-1}.eval-grid{grid-template-columns:1fr}.sim-controls{grid-template-columns:1fr 1fr}.sim-controls button{grid-column:1/-1}.weight-grid{grid-template-columns:1fr}.combo-row{grid-template-columns:1fr auto}.combo-bar{grid-column:1/-1;grid-row:2}.best-board-grid{grid-template-columns:1fr}.best-board svg{margin:auto}.mode-tabs button{font-size:.85rem;padding:9px 3px}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">10+</div><div><h1>护符打孔决策器</h1><p>10–15孔阶段 · 组件匹配 · 可调权重模拟</p></div></div>
+    <div class="status-pill">完全离线 · 数据仅存于本机</div>
+  </header>
+
+  <div class="workspace">
+    <section class="panel board-panel" aria-label="六边形版图编辑器">
+      <nav class="mode-tabs" aria-label="编辑对象">
+        <button class="active" data-mode="target">目标组件</button>
+        <button data-mode="old">旧版图</button>
+        <button data-mode="new">新版图</button>
+      </nav>
+      <div class="board-head"><strong id="boardTitle">编辑目标组件</strong><span class="count"><b id="cellCount">0</b><span id="countTail"> 格</span></span></div>
+      <div class="board-wrap"><svg id="mainBoard" class="hex-board" viewBox="0 0 420 390" role="group" aria-label="37格六边形版图"></svg></div>
+      <div class="board-note" id="boardNote">点击小六边形切换明暗；组件可小于15格</div>
+      <div class="toolbar">
+        <button class="btn" id="clearBtn">清空当前</button>
+        <button class="btn" id="copyBtn" hidden>复制到新版图</button>
+        <button class="btn soft" id="recallOldBtn" hidden>清除并调用旧版图</button>
+        <button class="btn" id="swapBtn" hidden>交换新旧版图</button>
+      </div>
+      <div class="notice">10–14孔阶段可按权重选择“保持孔数”或“净增1孔”，15孔后只换孔。模拟百分比来自当前权重和贪心保留策略，不代表游戏公布概率。</div>
+    </section>
+
+    <div class="side">
+      <section class="panel" aria-labelledby="targetHeading">
+        <div class="section-head"><div><h2 id="targetHeading">目标组件库</h2><p>组件数量可重复，相对位置不限</p></div><span class="badge" id="targetCellsBadge">共 0 格</span></div>
+        <div class="target-set-bar">
+          <div class="target-pages" id="targetPages" role="tablist" aria-label="目标组合分页"></div>
+          <div class="set-actions">
+            <button class="icon-btn" id="addTargetSet" aria-label="新增目标组合" title="新增目标组合">＋</button>
+            <button class="icon-btn" id="renameTargetSet" aria-label="重命名当前组合" title="重命名当前组合">✎</button>
+            <button class="icon-btn danger" id="deleteTargetSet" aria-label="删除当前组合" title="删除当前组合">×</button>
+          </div>
+        </div>
+        <div class="component-actions">
+          <div class="field"><label for="componentName">组件名称</label><input id="componentName" maxlength="24" placeholder="例如：三角形"></div>
+          <div class="field"><label for="componentQty">需要数量</label><input id="componentQty" type="number" min="1" max="15" value="1"></div>
+          <button class="btn primary" id="saveComponent">保存组件</button>
+        </div>
+        <div class="switches">
+          <label class="check"><input type="checkbox" id="allowRotate" checked>允许旋转</label>
+          <label class="check"><input type="checkbox" id="exactFill">必须恰好用满15孔</label>
+        </div>
+        <div id="componentList" class="components"><div class="component-empty">尚未保存组件</div></div>
+
+        <details id="weightDetails">
+          <summary>概率模型与权重</summary>
+          <p class="weight-intro">默认：每条相邻边权重为1，后续边不递减；新增权重取相邻边权重和，移除权重取其倒数；中心孔倍率均为1；变化1/2/3孔权重为6/4/0。10–14孔阶段的净增与保持权重默认为1/1。</p>
+          <div class="weight-grid">
+            <div class="field"><label for="edgeWeight">每条边基础权重</label><input id="edgeWeight" type="number" min="0.01" max="100" step="0.05"></div>
+            <div class="field"><label for="decay">复数边递减系数</label><input id="decay" type="number" min="0" max="2" step="0.05"></div>
+            <div class="field"><label for="addPower">新增权重指数</label><input id="addPower" type="number" min="0" max="5" step="0.1"></div>
+            <div class="field"><label for="removePower">移除反比指数</label><input id="removePower" type="number" min="0" max="5" step="0.1"></div>
+            <div class="field"><label for="centerAdd">中心新增倍率</label><input id="centerAdd" type="number" min="0" max="100" step="0.1"></div>
+            <div class="field"><label for="centerRemove">中心移除倍率</label><input id="centerRemove" type="number" min="0" max="100" step="0.1"></div>
+            <div class="field"><label for="swap1">换1孔权重</label><input id="swap1" type="number" min="0" max="1000" step="1"></div>
+            <div class="field"><label for="swap2">换2孔权重</label><input id="swap2" type="number" min="0" max="1000" step="1"></div>
+            <div class="field"><label for="swap3">换3孔权重</label><input id="swap3" type="number" min="0" max="1000" step="1"></div>
+            <div class="field"><label for="grow">10–14孔净增1孔权重</label><input id="grow" type="number" min="0" max="1000" step="1"></div>
+            <div class="field"><label for="stay">10–14孔保持孔数权重</label><input id="stay" type="number" min="0" max="1000" step="1"></div>
+          </div>
+          <div class="weight-actions"><button class="btn primary" id="applyWeights">确定修改权重</button><button class="btn" id="resetWeights">恢复默认权重</button><span class="active-model" id="modelState">当前为默认权重</span></div>
+          <div class="formula" id="formulaText"></div>
+        </details>
+      </section>
+
+      <section class="panel" aria-labelledby="resultHeading">
+        <div class="section-head"><div><h2 id="resultHeading">版图比较</h2><p>先精确匹配，再模拟未来换孔</p></div><button class="btn soft" id="compareBtn">检查当前版图</button></div>
+        <div class="eval-grid">
+          <article class="eval-card" id="oldCard"><div class="eval-label">旧版图</div><div class="eval-big" id="oldBig">待录入</div><div class="eval-note" id="oldNote">需要10–15个亮孔</div></article>
+          <article class="eval-card" id="newCard"><div class="eval-label">新版图</div><div class="eval-big" id="newBig">待录入</div><div class="eval-note" id="newNote">需要10–15个亮孔</div></article>
+        </div>
+        <div class="sim-controls">
+          <div class="field"><label for="attempts">未来打孔次数</label><input id="attempts" type="number" min="1" max="500" value="100"></div>
+          <div class="field"><label for="trials">模拟轮数</label><select id="trials"><option value="2000" selected>2,000（推荐）</option><option value="10000">10,000（精细）</option><option value="30000">30,000（较慢）</option></select></div>
+          <button class="btn primary" id="simulateBtn">开始概率模拟</button>
+        </div>
+        <div class="progress" id="progress"><span></span></div>
+        <div class="result-note" id="resultNote">模拟假设：每次生成候选新版图，并保留目标评分更高的一版；同分时各50%。置信区间只反映抽样误差，不包含模型偏差。</div>
+        <div class="combo-comparison" id="comboComparison" hidden>
+          <h3>新版图对各目标组合</h3>
+          <p>每套组合独立采用最有利于该目标的贪心保留策略。</p>
+          <div class="combo-results" id="comboResults"></div>
+        </div>
+        <div class="best-board" id="bestBoard"><div class="best-board-grid"><svg id="resultBoard" viewBox="0 0 420 390" aria-label="最常见成功版图"></svg><div><h3 id="bestTitle">最常见成功组合版图</h3><p id="bestText"></p></div></div></div>
+      </section>
+    </div>
+  </div>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+  const STORAGE_KEY='talisman-hole-advisor-v1';
+  const DEFAULTS={edgeWeight:1,decay:1,addPower:1,removePower:1,centerAdd:1,centerRemove:1,swap1:6,swap2:4,swap3:0,grow:1,stay:1};
+  const DIRS=[[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+  const cells=[]; const byKey=new Map();
+  for(let r=-3;r<=3;r++){
+    const qMin=Math.max(-3,-r-3),qMax=Math.min(3,-r+3);
+    for(let q=qMin;q<=qMax;q++){const id=cells.length,c={id,q,r,key:`${q},${r}`};cells.push(c);byKey.set(c.key,c)}
+  }
+  cells.forEach(c=>c.neighbors=DIRS.map(([dq,dr])=>byKey.get(`${c.q+dq},${c.r+dr}`)?.id).filter(Number.isInteger));
+  const centerId=byKey.get('0,0').id;
+  const firstTargetId='target-default';
+  const app={mode:'target',targetDraft:new Set(),old:new Set(),new:new Set(),targetSets:[{id:firstTargetId,name:'组合 1',components:[]}],activeTargetId:firstTargetId,selectedComponent:null,settings:{rotate:true,exact:false},weights:{...DEFAULTS},evalCache:new Map(),running:false};
+  function activeTargetSet(){return app.targetSets.find(s=>s.id===app.activeTargetId)||app.targetSets[0]}
+  Object.defineProperty(app,'components',{get(){return activeTargetSet()?.components||[]},set(value){const target=activeTargetSet();if(target)target.components=value}});
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const pop=n=>{n=n>>>0;n=n-((n>>>1)&0x55555555);n=(n&0x33333333)+((n>>>2)&0x33333333);return (((n+(n>>>4))&0x0F0F0F0F)*0x01010101)>>>24};
+  const countMask=m=>pop(m.lo)+pop(m.hi);
+  const setToMask=set=>{let lo=0,hi=0;for(const id of set){if(id<32)lo=(lo|(1<<id))>>>0;else hi=(hi|(1<<(id-32)))>>>0}return{lo,hi}};
+  const maskToSet=m=>{const s=new Set();for(let i=0;i<37;i++){if(i<32?((m.lo>>>i)&1):((m.hi>>>(i-32))&1))s.add(i)}return s};
+  const has=(m,id)=>id<32?!!((m.lo>>>id)&1):!!((m.hi>>>(id-32))&1);
+  const add=(m,id)=>id<32?{lo:(m.lo|(1<<id))>>>0,hi:m.hi}:{lo:m.lo,hi:(m.hi|(1<<(id-32)))>>>0};
+  const del=(m,id)=>id<32?{lo:(m.lo&~(1<<id))>>>0,hi:m.hi}:{lo:m.lo,hi:(m.hi&~(1<<(id-32)))>>>0};
+  const union=(a,b)=>({lo:(a.lo|b.lo)>>>0,hi:(a.hi|b.hi)>>>0});
+  const overlap=(a,b)=>pop((a.lo&b.lo)>>>0)+pop((a.hi&b.hi)>>>0);
+  const intersects=(a,b)=>!!(((a.lo&b.lo)>>>0)||((a.hi&b.hi)>>>0));
+  const subset=(a,b)=>(((a.lo&b.lo)>>>0)===a.lo&&((a.hi&b.hi)>>>0)===a.hi);
+  const keyMask=m=>`${m.lo.toString(36)}.${m.hi.toString(36)}`;
+
+  function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+  function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),1800)}
+  function activeSet(){return app.mode==='target'?app.targetDraft:app[app.mode]}
+  function isConnected(set){if(!set.size)return true;const first=set.values().next().value,seen=new Set([first]),stack=[first];while(stack.length){const id=stack.pop();for(const n of cells[id].neighbors)if(set.has(n)&&!seen.has(n)){seen.add(n);stack.push(n)}}return seen.size===set.size}
+  function formatCoordList(set){return [...set].map(id=>[cells[id].q,cells[id].r])}
+
+  function polygonPoints(cx,cy,size){const pts=[];for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);pts.push(`${cx+size*Math.cos(a)},${cy+size*Math.sin(a)}`)}return pts.join(' ')}
+  function svgMarkup(set,interactive=true,plan=null){const size=28,scale=52,ox=210,oy=195;let out=`<defs><linearGradient id="cellGradient" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4cd0d0"/><stop offset="1" stop-color="#117ca3"/></linearGradient></defs>`;for(const c of cells){const x=ox+scale*(c.q+c.r/2),y=oy+scale*.866*c.r;const on=set.has(c.id),planned=plan&&has(plan,c.id);out+=`<g class="hex-cell ${on?'on':''} ${c.id===centerId?'center':''}" ${interactive?`data-id="${c.id}" role="button" tabindex="0" aria-label="${on?'亮孔':'暗孔'}，坐标 ${c.q},${c.r}" aria-pressed="${on}"`:''}><polygon points="${polygonPoints(x,y,size)}"${planned&&!on?' style="stroke:#ef8f42;stroke-width:4;stroke-dasharray:6 4"':''}/>${interactive?`<text x="${x}" y="${y}">${c.id+1}</text>`:''}</g>`}return out}
+  function renderBoard(){const set=activeSet(),svg=$('#mainBoard');svg.innerHTML=svgMarkup(set,true);svg.querySelectorAll('.hex-cell').forEach(g=>{g.addEventListener('click',()=>toggleCell(+g.dataset.id));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleCell(+g.dataset.id)}})});$('#cellCount').textContent=set.size;$('#countTail').textContent=app.mode==='target'?' 格':' / 15';const names={target:'编辑目标组件',old:'录入旧版图',new:'录入新版图'};$('#boardTitle').textContent=names[app.mode];if(app.mode==='target')$('#boardNote').textContent='点击小六边形切换明暗；组件可小于15格';else if(set.size<10)$('#boardNote').textContent=`还需点亮 ${10-set.size} 格才能计算`;else if(!isConnected(set))$('#boardNote').textContent=`${set.size}孔已录入，但版图不连通`;else $('#boardNote').textContent=set.size===15?'15孔版图连通，将按换孔阶段计算':`${set.size}孔版图连通，将按增长阶段计算`;$('#copyBtn').hidden=app.mode!=='old';$('#recallOldBtn').hidden=app.mode!=='new';$('#swapBtn').hidden=app.mode==='target'}
+  function toggleCell(id){const set=activeSet();if(set.has(id))set.delete(id);else{if(app.mode!=='target'&&set.size>=15){toast('最多录入15个亮孔');return}set.add(id)}app.evalCache.clear();renderBoard();saveState();updateCardsBasic()}
+  function setMode(mode){app.mode=mode;$$('.mode-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));renderBoard()}
+
+  function targetSetId(){return 'target-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+  function resetTargetEditor(){app.selectedComponent=null;app.targetDraft.clear();$('#componentName').value='';$('#componentQty').value=1;app.evalCache.clear();$('#comboComparison').hidden=true;$('#bestBoard').style.display='none'}
+  function switchTargetSet(id){if(!app.targetSets.some(s=>s.id===id))return;app.activeTargetId=id;resetTargetEditor();renderTargetSets();renderComponents();renderBoard();updateCardsBasic();saveState()}
+  function addTargetSet(){const fallback=`组合 ${app.targetSets.length+1}`,name=(window.prompt('请输入新目标组合名称',fallback)||'').trim();if(!name)return;const set={id:targetSetId(),name:name.slice(0,30),components:[]};app.targetSets.push(set);app.activeTargetId=set.id;resetTargetEditor();renderTargetSets();renderComponents();renderBoard();saveState()}
+  function renameTargetSet(){const set=activeTargetSet(),name=(window.prompt('重命名当前目标组合',set.name)||'').trim();if(!name)return;set.name=name.slice(0,30);renderTargetSets();saveState()}
+  function deleteTargetSet(){if(app.targetSets.length===1){toast('至少保留一套目标组合');return}const set=activeTargetSet();if(!window.confirm(`删除“${set.name}”及其中全部组件？`))return;app.targetSets=app.targetSets.filter(s=>s.id!==set.id);app.activeTargetId=app.targetSets[0].id;resetTargetEditor();renderTargetSets();renderComponents();renderBoard();saveState();toast('目标组合已删除')}
+  function renderTargetSets(){const box=$('#targetPages');box.innerHTML=app.targetSets.map(s=>{const cells=s.components.reduce((n,c)=>n+c.qty*c.shape.length,0);return `<button class="target-tab ${s.id===app.activeTargetId?'active':''}" role="tab" aria-selected="${s.id===app.activeTargetId}" data-id="${s.id}" title="${escapeHtml(s.name)}：${s.components.length}个组件，共${cells}格">${escapeHtml(s.name)}</button>`}).join('');box.querySelectorAll('.target-tab').forEach(b=>b.onclick=()=>switchTargetSet(b.dataset.id))}
+
+  function normalizeCoords(coords){let anchor=coords.reduce((a,b)=>a.q<b.q||(a.q===b.q&&a.r<b.r)?a:b);return coords.map(c=>({q:c.q-anchor.q,r:c.r-anchor.r})).sort((a,b)=>a.q-b.q||a.r-b.r)}
+  function rot(c){return{q:-c.r,r:c.q+c.r}}
+  function orientations(shape){const all=[],seen=new Set();let cur=shape.map(c=>({...c}));const times=app.settings.rotate?6:1;for(let i=0;i<times;i++){const n=normalizeCoords(cur),k=n.map(c=>`${c.q},${c.r}`).join(';');if(!seen.has(k)){seen.add(k);all.push(n)}cur=cur.map(rot)}return all}
+  function placementsFor(comp){const result=[],seen=new Set();for(const shape of orientations(comp.shape)){for(const anchor of cells){const ids=shape.map(p=>byKey.get(`${p.q+anchor.q},${p.r+anchor.r}`)?.id);if(ids.every(Number.isInteger)){const mask=setToMask(new Set(ids)),k=keyMask(mask);if(!seen.has(k)){seen.add(k);result.push(mask)}}}}return result}
+  function targetInstances(components=app.components){const arr=[];for(const c of components)for(let i=0;i<c.qty;i++)arr.push(c);return arr}
+  function targetCellCount(components=app.components){return components.reduce((n,c)=>n+c.qty*c.shape.length,0)}
+  function saveComponent(){const set=app.targetDraft;if(!set.size){toast('请先点亮组件形状');return}if(!isConnected(set)){toast('组件需要保持连通');return}const name=$('#componentName').value.trim()||`组件 ${app.components.length+1}`,qty=Math.max(1,Math.min(15,+$('#componentQty').value||1));const shape=normalizeCoords([...set].map(id=>({q:cells[id].q,r:cells[id].r})));if(app.selectedComponent){const c=app.components.find(x=>x.id===app.selectedComponent);if(c){c.name=name;c.qty=qty;c.shape=shape}}else app.components.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,qty,shape});app.selectedComponent=null;app.targetDraft.clear();$('#componentName').value='';$('#componentQty').value=1;app.evalCache.clear();renderBoard();renderComponents();renderTargetSets();saveState();toast('组件已保存')}
+  function loadComponent(id){const c=app.components.find(x=>x.id===id);if(!c)return;app.selectedComponent=id;const firstPlacement=placementsFor(c)[0];app.targetDraft=firstPlacement?maskToSet(firstPlacement):new Set();$('#componentName').value=c.name;$('#componentQty').value=c.qty;setMode('target');renderComponents();toast('已载入组件，可修改后保存')}
+  function deleteComponent(id){app.components=app.components.filter(c=>c.id!==id);if(app.selectedComponent===id){app.selectedComponent=null;app.targetDraft.clear()}app.evalCache.clear();renderBoard();renderComponents();renderTargetSets();saveState()}
+  function miniSvg(shape){const pts=shape.map(p=>({x:31+12*(p.q+p.r/2),y:25+10.4*p.r}));const minX=Math.min(...pts.map(p=>p.x)),maxX=Math.max(...pts.map(p=>p.x)),minY=Math.min(...pts.map(p=>p.y)),maxY=Math.max(...pts.map(p=>p.y));const dx=31-(minX+maxX)/2,dy=25-(minY+maxY)/2;return `<svg class="mini" viewBox="0 0 62 50" aria-hidden="true">${pts.map(p=>`<polygon points="${polygonPoints(p.x+dx,p.y+dy,7)}" fill="#35b7c8" stroke="#fff"/>`).join('')}</svg>`}
+  function renderComponents(){const list=$('#componentList');if(!app.components.length)list.innerHTML='<div class="component-empty">当前组合尚未保存组件</div>';else list.innerHTML=app.components.map(c=>`<div class="component-card ${app.selectedComponent===c.id?'selected':''}" data-id="${c.id}">${miniSvg(c.shape)}<div><div class="comp-name">${escapeHtml(c.name)}</div><div class="comp-meta">${c.shape.length}格 × <span class="qty-text">${c.qty}</span></div></div><div class="qty"><button class="icon-btn edit" aria-label="编辑 ${escapeHtml(c.name)}">✎</button><input class="qty-input" aria-label="${escapeHtml(c.name)}数量" type="number" min="1" max="15" value="${c.qty}"><button class="icon-btn delete" aria-label="删除 ${escapeHtml(c.name)}">×</button></div></div>`).join('');list.querySelectorAll('.component-card').forEach(card=>{const id=card.dataset.id;card.querySelector('.edit').onclick=()=>loadComponent(id);card.querySelector('.delete').onclick=()=>deleteComponent(id);card.querySelector('.qty-input').onchange=e=>{const c=app.components.find(x=>x.id===id);c.qty=Math.max(1,Math.min(15,+e.target.value||1));e.target.value=c.qty;card.querySelector('.qty-text').textContent=c.qty;app.evalCache.clear();updateTargetBadge();renderTargetSets();saveState()}});updateTargetBadge()}
+  function updateTargetBadge(){const n=targetCellCount();$('#targetCellsBadge').textContent=`共 ${n} 格`;$('#targetCellsBadge').className=`badge ${n>15?'warn':n?'good':''}`}
+
+  function compileTarget(components=app.components){const instances=targetInstances(components),compiled=instances.map(c=>({name:c.name,size:c.shape.length,placements:placementsFor(c)})).sort((a,b)=>a.placements.length-b.placements.length);compiled.total=targetCellCount(components);compiled.signature=components.map(c=>`${c.id}:${c.qty}:${c.shape.map(p=>`${p.q},${p.r}`).join('.')}`).join('|')+`|r${app.settings.rotate?'1':'0'}|e${app.settings.exact?'1':'0'}`;return compiled}
+  function exactMatch(board,compiled){if(!compiled.length)return null;if(app.settings.exact&&compiled.total!==15)return null;function dfs(i,used){if(i===compiled.length)return used;for(const p of compiled[i].placements){if(!intersects(p,used)&&subset(p,board)){const got=dfs(i+1,union(used,p));if(got)return got}}return null}return dfs(0,{lo:0,hi:0})}
+  function edgeSum(n,w=app.weights){let sum=0,factor=1;for(let i=0;i<n;i++){sum+=w.edgeWeight*factor;factor*=w.decay}return sum}
+  function addWeight(n,id,w=app.weights){if(n<2)return 0;let v=Math.pow(Math.max(edgeSum(n,w),1e-9),w.addPower);if(id===centerId)v*=w.centerAdd;return v}
+  function removeWeight(n,id,w=app.weights){let v=1/Math.pow(Math.max(edgeSum(Math.max(n,1),w),1e-9),w.removePower);if(id===centerId)v*=w.centerRemove;return v}
+  function sharedEdges(mask,id){let n=0;for(const x of cells[id].neighbors)if(has(mask,x))n++;return n}
+  function maskConnected(mask){const count=countMask(mask);if(count<2)return true;let first=-1;for(let i=0;i<37;i++)if(has(mask,i)){first=i;break}const seen=new Set([first]),stack=[first];while(stack.length){const id=stack.pop();for(const n of cells[id].neighbors)if(has(mask,n)&&!seen.has(n)){seen.add(n);stack.push(n)}}return seen.size===count}
+  function bestPlan(board,compiled){let best={score:-Infinity,plan:null,covered:0};const total=compiled.total;function finish(used){const covered=overlap(used,board);let potential=0;for(let i=0;i<37;i++)if(has(used,i)&&!has(board,i))potential+=addWeight(sharedEdges(board,i),i)*1.8;for(let i=0;i<37;i++)if(has(board,i)&&!has(used,i))potential+=removeWeight(sharedEdges(board,i),i)*.8;const score=covered*100+potential;if(score>best.score)best={score,plan:used,covered}}function greedy(seed){let used=seed||{lo:0,hi:0},start=seed?1:0;for(let i=start;i<compiled.length;i++){let pick=null,pickValue=-Infinity;for(const p of compiled[i].placements){if(intersects(p,used))continue;const value=overlap(p,board)*100;if(value>pickValue){pickValue=value;pick=p}}if(!pick)return;used=union(used,pick)}finish(used)}if(!compiled.length)finish({lo:0,hi:0});else{const seeds=compiled[0].placements.map(p=>({p,v:overlap(p,board)})).sort((a,b)=>b.v-a.v).slice(0,3);for(const x of seeds)greedy(x.p)}if(!best.plan)best={score:0,plan:{lo:0,hi:0},covered:0};best.total=total;return best}
+  function evaluate(mask,compiled,strict=false){const k=keyMask(mask)+'|'+compiled.signature+(strict?'|s':'|f');if(app.evalCache.has(k))return app.evalCache.get(k);const bp=bestPlan(mask,compiled);let matched=bp.covered===bp.total?bp.plan:null;if(!matched&&(strict||bp.covered>=bp.total-1))matched=exactMatch(mask,compiled);const value={satisfied:!!matched,score:matched?1e9:bp.score,covered:matched?bp.total:bp.covered,total:bp.total,plan:matched||bp.plan};if(app.evalCache.size>30000)app.evalCache.clear();app.evalCache.set(k,value);return value}
+
+  function validateInputs(){const problems=[];if(!app.components.length)problems.push('请至少保存一个目标组件');if(targetCellCount()>15)problems.push('目标组件合计超过15格');if(app.settings.exact&&targetCellCount()!==15)problems.push('“恰好用满”要求目标组件合计为15格');for(const mode of ['old','new']){if(app[mode].size<10||app[mode].size>15)problems.push(`${mode==='old'?'旧':'新'}版图需要10–15个亮孔`);else if(!isConnected(app[mode]))problems.push(`${mode==='old'?'旧':'新'}版图必须连通`)}return problems}
+  function updateCardsBasic(){for(const mode of ['old','new']){const s=app[mode],big=$(`#${mode}Big`),note=$(`#${mode}Note`);if(s.size<10||s.size>15){big.textContent=`${s.size} / 10+`;note.textContent=s.size<10?`还需录入 ${10-s.size} 个亮孔`:'最多只能录入15个亮孔'}else if(!isConnected(s)){big.textContent='不连通';note.textContent=`请调整为连通的${s.size}孔版图`}else{big.textContent=`${s.size}孔可检查`;note.textContent=s.size===15?'将按15孔换孔阶段计算':'将按10–14孔增长阶段计算'}}}
+  function compare(){const errors=validateInputs();if(errors.length){toast(errors[0]);updateCardsBasic();return null}const compiled=compileTarget(),results={};for(const mode of ['old','new']){const mask=setToMask(app[mode]),ev=evaluate(mask,compiled,true);results[mode]=ev;$(`#${mode}Big`).textContent=ev.satisfied?'已满足':`${ev.covered} / ${ev.total} 格`;$(`#${mode}Note`).textContent=ev.satisfied?'当前版图可无重叠容纳全部组件':`最佳组合仍缺 ${Math.max(0,ev.total-ev.covered)} 个目标孔`;$(`#${mode}Card`).classList.remove('recommended')}let rec=results.old.score>=results.new.score?'old':'new';if(results.old.score===results.new.score)rec=null;if(rec)$(`#${rec}Card`).classList.add('recommended');$('#resultNote').textContent=rec?`静态评分建议先保留${rec==='old'?'旧':'新'}版图；请运行模拟比较限次成功率。`:'两版静态评分相同；建议运行概率模拟。';return{compiled,results}}
+  function weightedChoice(items,weights){let total=weights.reduce((a,b)=>a+b,0);if(!(total>0))return null;let x=Math.random()*total;for(let i=0;i<items.length;i++){x-=weights[i];if(x<=0)return items[i]}return items[items.length-1]}
+  function chooseSwapCount(w){return weightedChoice([1,2,3],[w.swap1,w.swap2,w.swap3])||1}
+  function addOne(m,w,excluded=-1){const adds=[],aw=[];for(let id=0;id<37;id++)if(!has(m,id)&&id!==excluded){const weight=addWeight(sharedEdges(m,id),id,w);if(weight>0){adds.push(id);aw.push(weight)}}const aid=weightedChoice(adds,aw);return aid==null?m:add(m,aid)}
+  function swapOne(m,w){const rem=[],rw=[];for(let id=0;id<37;id++)if(has(m,id)){const next=del(m,id);if(maskConnected(next)){let possible=false;for(let a=0;a<37&&!possible;a++)if(!has(next,a)&&a!==id&&addWeight(sharedEdges(next,a),a,w)>0)possible=true;if(possible){rem.push(id);rw.push(removeWeight(sharedEdges(m,id),id,w))}}}const rid=weightedChoice(rem,rw);if(rid==null)return m;const reduced=del(m,rid),next=addOne(reduced,w,rid);return countMask(next)===countMask(m)?next:m}
+  function transition(start,w){let m={...start};const changes=chooseSwapCount(w),canGrow=countMask(m)<15,growNow=canGrow&&weightedChoice([true,false],[w.grow,w.stay]);let completed=0;if(growNow){const grown=addOne(m,w);if(countMask(grown)>countMask(m)){m=grown;completed=1}}for(let step=completed;step<changes;step++)m=swapOne(m,w);return m}
+  function wilson(success,n){if(!n)return[0,0];const z=1.96,p=success/n,d=1+z*z/n,c=(p+z*z/(2*n))/d,h=z*Math.sqrt((p*(1-p)+z*z/(4*n))/n)/d;return[Math.max(0,c-h),Math.min(1,c+h)]}
+  async function simulateOne(start,compiled,trials,attempts,onProgress){let success=0,totalSteps=0;const finals=new Map();for(let t=0;t<trials;t++){let current={...start},ev=evaluate(current,compiled);if(ev.satisfied){success++;finals.set(keyMask(current),(finals.get(keyMask(current))||0)+1);continue}for(let step=1;step<=attempts;step++){const candidate=transition(current,app.weights),cev=evaluate(candidate,compiled);totalSteps++;if(cev.satisfied){success++;finals.set(keyMask(candidate),(finals.get(keyMask(candidate))||0)+1);break}if(cev.score>ev.score||(cev.score===ev.score&&Math.random()<.5)){current=candidate;ev=cev}}if(t%100===0){onProgress(t/trials);await new Promise(r=>setTimeout(r,0))}}onProgress(1);let top=null,topN=0;for(const[k,n]of finals)if(n>topN){top=k;topN=n}return{success,rate:success/trials,ci:wilson(success,trials),avgSteps:success?totalSteps/success:null,top,topN}}
+  function parseMaskKey(k){const[a,b]=k.split('.');return{lo:parseInt(a,36)>>>0,hi:parseInt(b,36)>>>0}}
+  function targetSetProblem(set){if(!set.components.length)return '尚无组件';const total=targetCellCount(set.components);if(total>15)return '目标超过15格';if(app.settings.exact&&total!==15)return '未恰好使用15格';return ''}
+  async function runSimulation(){if(app.running)return;const base=compare();if(!base)return;const trials=+$('#trials').value,attempts=Math.max(1,Math.min(500,+$('#attempts').value||100)),validSets=app.targetSets.filter(s=>!targetSetProblem(s)),skipped=app.targetSets.filter(s=>targetSetProblem(s));app.running=true;$('#simulateBtn').disabled=true;$('#simulateBtn').textContent='模拟中…';$('#progress').style.display='block';$('#comboComparison').hidden=false;$('#comboResults').innerHTML='<div class="component-empty">正在比较新版图与全部目标组合…</div>';const bar=$('#progress span'),totalRuns=1+validSets.length,prog=(runIndex,fraction)=>bar.style.width=`${Math.min(100,(runIndex+fraction)/totalRuns*100)}%`;try{app.evalCache.clear();const oldR=await simulateOne(setToMask(app.old),base.compiled,trials,attempts,p=>prog(0,p));const comboResults=[];let activeNewR=null,runIndex=1;for(const set of validSets){const compiled=set.id===app.activeTargetId?base.compiled:compileTarget(set.components),result=await simulateOne(setToMask(app.new),compiled,trials,attempts,p=>prog(runIndex,p));comboResults.push({set,result});if(set.id===app.activeTargetId)activeNewR=result;runIndex++}if(!activeNewR)throw new Error('当前目标组合无法计算');bar.style.width='100%';showSimulation(oldR,activeNewR,trials,attempts);showComboResults(comboResults,skipped,trials)}finally{app.running=false;$('#simulateBtn').disabled=false;$('#simulateBtn').textContent='开始概率模拟';setTimeout(()=>$('#progress').style.display='none',700)}}
+  function pct(x){return(x*100).toFixed(x<.01?2:1)+'%'}
+  function showSimulation(oldR,newR,trials,attempts){for(const[mode,r]of [['old',oldR],['new',newR]]){$(`#${mode}Big`).textContent=pct(r.rate);$(`#${mode}Note`).textContent=`95%区间 ${pct(r.ci[0])}–${pct(r.ci[1])} · ${r.success}/${trials} 轮成功`;$(`#${mode}Card`).classList.remove('recommended')}let winner=oldR.rate===newR.rate?null:(oldR.rate>newR.rate?'old':'new');if(winner)$(`#${winner}Card`).classList.add('recommended');$('#resultNote').textContent=winner?`在未来 ${attempts} 次、当前权重及贪心保留策略下，模型建议保留${winner==='old'?'旧':'新'}版图。两者差值小于各自置信区间宽度时，应视为没有明显优势。`:`两版图在本次模拟中的成功率相同，暂时没有明显优势。`;const winR=winner==='new'?newR:oldR,box=$('#bestBoard');if(winR.top){const mask=parseMaskKey(winR.top),holes=countMask(mask);$('#resultBoard').innerHTML=svgMarkup(maskToSet(mask),false);$('#bestTitle').textContent=`${winner==='new'?'新':'旧'}版起点的最常见成功版图`;$('#bestText').textContent=`在 ${winR.success} 次成功样本中出现 ${winR.topN} 次，共${holes}孔。它是采样中最常见的成功版图，不代表唯一可行组合。`;box.style.display='block'}else{box.style.display='none'}}
+  function showComboResults(results,skipped,trials){const ranked=[...results].sort((a,b)=>b.result.rate-a.result.rate),best=ranked[0]?.result.rate;$('#comboResults').innerHTML=ranked.map(({set,result})=>`<div class="combo-row ${result.rate===best?'best':''}"><div class="combo-name" title="${escapeHtml(set.name)}">${escapeHtml(set.name)}</div><div class="combo-bar" aria-label="成功率 ${pct(result.rate)}"><span style="width:${Math.max(result.rate?2:0,result.rate*100)}%"></span></div><div class="combo-value">${pct(result.rate)}<span class="combo-ci">95% ${pct(result.ci[0])}–${pct(result.ci[1])}</span></div></div>`).join('')+skipped.map(set=>`<div class="combo-row"><div class="combo-name">${escapeHtml(set.name)}</div><div class="combo-bar"></div><div class="combo-value">不可计算<span class="combo-ci">${escapeHtml(targetSetProblem(set))}</span></div></div>`).join('');$('#comboComparison').hidden=false}
+
+  function readWeightDraft(){const obj={};for(const k of Object.keys(DEFAULTS))obj[k]=+$(`#${k}`).value;return obj}
+  function validWeights(w){return Object.values(w).every(v=>Number.isFinite(v)&&v>=0)&&w.edgeWeight>0&&(w.swap1+w.swap2+w.swap3)>0&&(w.grow+w.stay)>0}
+  function fillWeightInputs(w){for(const[k,v]of Object.entries(w))$(`#${k}`).value=v;updateFormula(w)}
+  function updateFormula(w){const sums=[1,2,3,4,5,6].map(n=>edgeSum(n,w).toFixed(2)).join(' / ');$('#formulaText').innerHTML=`相邻1–6边的累计值：<b>${sums}</b><br>新增候选（至少2边）：累计值<sup>${w.addPower}</sup>；移除候选：1 ÷ 累计值<sup>${w.removePower}</sup>。“换1孔”表示移除1个旧孔并新增1个孔；各变化孔数及10–14孔阶段的净增/保持权重都会自动归一化。`}
+  function applyWeights(){const w=readWeightDraft();if(!validWeights(w)){toast('请检查权重：数值须有效，换孔权重不能全为0');return}app.weights=w;app.evalCache.clear();$('#modelState').textContent=JSON.stringify(w)===JSON.stringify(DEFAULTS)?'当前为默认权重':'自定义权重已生效';updateFormula(w);saveState();toast('概率权重已更新')}
+  function resetWeights(){app.weights={...DEFAULTS};fillWeightInputs(app.weights);$('#modelState').textContent='当前为默认权重';app.evalCache.clear();saveState();toast('已恢复默认权重')}
+  function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({targetSets:app.targetSets,activeTargetId:app.activeTargetId,old:formatCoordList(app.old),new:formatCoordList(app.new),settings:app.settings,weights:app.weights}))}catch{}}
+  function coordsToSet(arr){const set=new Set();for(const p of arr||[]){const c=byKey.get(`${p[0]},${p[1]}`);if(c)set.add(c.id)}return set}
+  function loadState(){try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(!x)return;if(Array.isArray(x.targetSets)&&x.targetSets.length)app.targetSets=x.targetSets.filter(s=>s&&s.id&&Array.isArray(s.components)).map(s=>({id:String(s.id),name:String(s.name||'未命名组合').slice(0,30),components:s.components}));else app.targetSets=[{id:firstTargetId,name:'组合 1',components:Array.isArray(x.components)?x.components:[]}];if(!app.targetSets.length)app.targetSets=[{id:firstTargetId,name:'组合 1',components:[]}];app.activeTargetId=app.targetSets.some(s=>s.id===x.activeTargetId)?x.activeTargetId:app.targetSets[0].id;app.old=coordsToSet(x.old);app.new=coordsToSet(x.new);app.settings.rotate=x.settings?.rotate!==false;app.settings.exact=!!x.settings?.exact;let merged={...DEFAULTS,...x.weights};const wasOldDefault=x.weights&&x.weights.swap1===100&&x.weights.swap2===0&&x.weights.swap3===0;if(wasOldDefault){merged.swap1=6;merged.swap2=4;merged.swap3=0}app.weights=validWeights(merged)?merged:{...DEFAULTS}}catch{}}
+
+  $$('.mode-tabs button').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));$('#clearBtn').onclick=()=>{activeSet().clear();app.selectedComponent=null;app.evalCache.clear();renderBoard();renderComponents();saveState()};$('#copyBtn').onclick=()=>{app.new=new Set(app.old);app.evalCache.clear();saveState();setMode('new');toast('旧版图已复制到新版图')};$('#recallOldBtn').onclick=()=>{app.new.clear();app.new=new Set(app.old);app.evalCache.clear();saveState();renderBoard();updateCardsBasic();toast('新版图已清除并调用旧版图')};$('#swapBtn').onclick=()=>{const t=app.old;app.old=app.new;app.new=t;app.evalCache.clear();saveState();renderBoard();updateCardsBasic();toast('新旧版图已交换')};$('#addTargetSet').onclick=addTargetSet;$('#renameTargetSet').onclick=renameTargetSet;$('#deleteTargetSet').onclick=deleteTargetSet;$('#saveComponent').onclick=saveComponent;$('#compareBtn').onclick=compare;$('#simulateBtn').onclick=runSimulation;$('#applyWeights').onclick=applyWeights;$('#resetWeights').onclick=resetWeights;for(const id of ['edgeWeight','decay','addPower','removePower','centerAdd','centerRemove','swap1','swap2','swap3','grow','stay'])$(`#${id}`).addEventListener('input',()=>{const w=readWeightDraft();if(Object.values(w).every(Number.isFinite))updateFormula(w)});for(const[id,key]of [['allowRotate','rotate'],['exactFill','exact']])$(`#${id}`).onchange=e=>{app.settings[key]=e.target.checked;app.evalCache.clear();$('#comboComparison').hidden=true;saveState()};
+  loadState();$('#allowRotate').checked=app.settings.rotate;$('#exactFill').checked=app.settings.exact;fillWeightInputs(app.weights);$('#modelState').textContent=JSON.stringify(app.weights)===JSON.stringify(DEFAULTS)?'当前为默认权重':'已载入自定义权重';renderTargetSets();renderBoard();renderComponents();updateCardsBasic();
+})();
+</script>
+</body>
+</html>
